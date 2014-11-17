@@ -81,6 +81,7 @@ Component.define = function (template, definition) {
   // Assign events
   var boundEvents = {};
 
+  // XXX can't pass in arguments? use data- instead?
   _.each(definition.events, function (handler, eventDescriptor) {
     // Bind events to the component instance
     boundEvents[eventDescriptor] = function (event, templateInst) {
@@ -93,6 +94,7 @@ Component.define = function (template, definition) {
   // Assign helpers
   var boundHelpers = {};
 
+  // XXX cache helpers since they don't depend on the data context anymore
   _.each(definition.helpers, function (helper, helperName) {
     boundHelpers[helperName] = function (/* helper args */) {
       return helper.apply(Template.instance()._component, arguments);
