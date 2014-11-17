@@ -51,22 +51,31 @@ var ComponentInstance = function (templateInst) {
 };
 
 Component.define = function (template, definition) {
+  // XXX need more protection against changing things like helpers/events
+  definition = _.clone(definition);
+
   // Assign all the callbacks to the template and bind them to component
   // instance
   template.created = function () {
     var templateInst = this;
     templateInst._component = new ComponentInstance(templateInst);
-    definition.created.call(templateInst._component);
+    if (definition.created) {
+      definition.created.call(templateInst._component);
+    }
   };
 
   template.rendered = function () {
     var templateInst = this;
-    definition.rendered.call(templateInst._component);
+    if (definition.rendered) {
+      definition.rendered.call(templateInst._component);
+    }
   };
 
   template.destroyed = function () {
     var templateInst = this;
-    definition.destroyed.call(templateInst._component);
+    if (definition.destroyed) {
+      definition.destroyed.call(templateInst._component);
+    }
   };
 
   // Assign events
@@ -75,7 +84,7 @@ Component.define = function (template, definition) {
   _.each(definition.events, function (handler, eventDescriptor) {
     // Bind events to the component instance
     boundEvents[eventDescriptor] = function (event, templateInst) {
-      handler.call(templateInst._component, event);
+      return handler.call(templateInst._component, event);
     };
   });
 
@@ -86,7 +95,7 @@ Component.define = function (template, definition) {
 
   _.each(definition.helpers, function (helper, helperName) {
     boundHelpers[helperName] = function (/* helper args */) {
-      handler.apply(Template.instance()._component, arguments);
+      return helper.apply(Template.instance()._component, arguments);
     };
   });
 

@@ -8,6 +8,8 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.0');
   api.addFiles('components.js');
+  api.use(["reactive-var", "reactive-dict"]);
+  api.export("Component");
 });
 
 Package.onTest(function(api) {
