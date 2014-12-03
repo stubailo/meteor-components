@@ -1,5 +1,3 @@
-var EDITING_KEY = 'EDITING_TODO_ID';
-
 Component.define(Template.todosItem, {
   helpers: {
     todoItem: function () {
@@ -9,7 +7,7 @@ Component.define(Template.todosItem, {
       return this.args.get("checked") && 'checked';
     },
     editingClass: function() {
-      return Session.equals(EDITING_KEY, this.args.get("_id")) && 'editing';
+      return this.args.get("selectedItem") === this.args.get("_id") && 'editing';
     }
   },
   events: {
@@ -20,12 +18,12 @@ Component.define(Template.todosItem, {
     },
     
     'focus input[type=text]': function() {
-      Session.set(EDITING_KEY, this.args.get("_id"));
+      this.args.get("setSelected")(this.args.get("_id"));
     },
     
     'blur input[type=text]': function() {
-      if (Session.equals(EDITING_KEY, this.args.get("_id"))) {
-        Session.set(EDITING_KEY, null);
+      if (this.args.get("selectedItem") === this.args.get("_id")) {
+        this.args.get("setSelected")(null);
       }
     },
     

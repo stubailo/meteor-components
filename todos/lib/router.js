@@ -47,7 +47,7 @@ Router.map(function() {
       }
     },
     data: function () {
-      return Lists.findOne(this.params._id);
+      return {_id: this.params._id};
     },
     action: function () {
       this.render();

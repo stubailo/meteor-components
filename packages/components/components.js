@@ -1,5 +1,31 @@
 // Write your package code here!
 
+// Reactive dict that doesn't serialize anything
+var SimpleReactiveDict = function () {
+  var keys = {};
+  var deps = {};
+
+  var ensureDeps = function(key) {
+    if(!deps[key]) {
+      deps[key] = new Deps.Dependency();
+    }
+  };
+
+  return {
+    set: function(key, value) {
+      ensureDeps(key);
+      keys[key] = value;
+      deps[key].changed();
+    },
+
+    get: function(key) {
+      ensureDeps(key);
+      deps[key].depend();
+      return keys[key];
+    }
+  };
+};
+
 Component = {};
 
 var ComponentInstance = function (templateInst) {
@@ -24,10 +50,10 @@ var ComponentInstance = function (templateInst) {
 
   // XXX if we can somehow generate a unique ID for this, we could use
   // reactive dict to persist on HCP
-  self.state = new ReactiveDict();
+  self.state = new SimpleReactiveDict();
 
   // XXX wrap read-write and read-only args appropriately
-  self.args = new ReactiveDict();
+  self.args = new SimpleReactiveDict();
   var updateArg = _.bind(self.args.set, self.args);
   self.args.set = function () {
     throw new Error("Cannot currently set an argument.");
@@ -48,6 +74,10 @@ var ComponentInstance = function (templateInst) {
       }
     });
   });
+
+  // XXX bind all methods?
+  self.find = _.bind(templateInst.find, templateInst);
+  self.$ = _.bind(templateInst.$, templateInst);
 };
 
 Component.define = function (template, definition) {
@@ -99,6 +129,17 @@ Component.define = function (template, definition) {
     boundHelpers[helperName] = function (/* helper args */) {
       return helper.apply(Template.instance()._component, arguments);
     };
+  });
+
+  // Assign callbacks as helpers
+  _.each(definition.callbacks, function (callback, callbackName) {
+    if (boundHelpers[callbackName]) {
+      console.log("Can't attach a callback named the same as a helper.");
+    } else {
+      boundHelpers[callbackName] = function () {
+        return _.bind(callback, templateInst);
+      };
+    }
   });
 
   template.helpers(boundHelpers);
