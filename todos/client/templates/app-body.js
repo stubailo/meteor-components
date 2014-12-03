@@ -11,9 +11,6 @@ Component.define(Template.appBody, {
     // Only show the connection error box if it has been 5 seconds since
     // the app started
     setTimeout(function () {
-      // Launch screen handle created in lib/router.js
-      dataReadyHold.release();
-
       // Show the connection error box
       self.state.set("showConnectionIssue", true);
     }, CONNECTION_ISSUE_TIMEOUT);
