@@ -5,6 +5,8 @@ listFadeInHold = null;
 
 Component.define(Template.listsShow, {
   created: function () {
+    this.subscribe("todos", this.args.get("_id"));
+
     this.state.set("selectedItem", null);
     this.state.set("editingTitle", null);
 
@@ -103,7 +105,7 @@ Component.define(Template.listsShow, {
     },
 
     todosReady: function() {
-      return Router.current().todosHandle.ready();
+      return this.ready();
     },
 
     todos: function(listId) {

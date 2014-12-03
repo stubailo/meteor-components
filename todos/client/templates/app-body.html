@@ -57,7 +57,11 @@
 
     <div id="content-container">
       {{#each thisArray}}
-        {{> yield}}
+        {{#if loading}}
+          {{> appLoading}}
+        {{else}}
+          {{> yield}}
+        {{/if}}
       {{/each}}
     </div>
   </div>

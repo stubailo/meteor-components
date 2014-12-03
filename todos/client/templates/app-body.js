@@ -17,6 +17,9 @@ Component.define(Template.appBody, {
       // Show the connection error box
       self.state.set("showConnectionIssue", true);
     }, CONNECTION_ISSUE_TIMEOUT);
+
+    self.subscribe('publicLists');
+    self.subscribe('privateLists');
   },
   rendered: function() {
     // set up a swipe left / right handler
@@ -80,6 +83,9 @@ Component.define(Template.appBody, {
       } else {
         return true;
       }
+    },
+    loading: function () {
+      return ! this.ready();
     }
   },
   events: {

@@ -35,7 +35,7 @@ var ComponentInstance = function (templateInst) {
   
   var subHandles = new ReactiveVar([]);
   self.subscribe = function (/* subscription args */) {
-    var handle = Meteor.subscribe(arguments);
+    var handle = Meteor.subscribe.apply(Meteor, arguments);
     subHandles.set(subHandles.get().concat(handle));
     return handle;
   };
@@ -43,6 +43,12 @@ var ComponentInstance = function (templateInst) {
   self._unsubAll = function () {
     _.each(subHandles, function (handle) {
       handle.stop();
+    });
+  };
+
+  self.ready = function () {
+    return _.all(subHandles.get(), function (handle) {
+      return handle.ready();
     });
   };
 
@@ -105,6 +111,7 @@ Component.define = function (template, definition) {
     var templateInst = this;
     if (definition.destroyed) {
       definition.destroyed.call(templateInst._component);
+      templateInst._component._unsubAll();
     }
   };
 
