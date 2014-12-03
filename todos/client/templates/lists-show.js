@@ -112,6 +112,7 @@ Component.define(Template.listsShow, {
 
     setSelected: function () {
       var self = this;
+      // XXX this is a callback... we need an explicit way to set it
       return function (todoItemId) {
         self.state.set("selectedItem", todoItemId);
       };

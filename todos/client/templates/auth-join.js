@@ -1,53 +1,55 @@
-var ERRORS_KEY = 'joinErrors';
-
-Template.join.created = function() {
-  Session.set(ERRORS_KEY, {});
-};
-
-Template.join.helpers({
-  errorMessages: function() {
-    return _.values(Session.get(ERRORS_KEY));
+Component.define(Template.join, {
+  created: function() {
+    this.state.set("errors", {});
   },
-  errorClass: function(key) {
-    return Session.get(ERRORS_KEY)[key] && 'error';
-  }
-});
 
-Template.join.events({
-  'submit': function(event, template) {
-    event.preventDefault();
-    var email = template.$('[name=email]').val();
-    var password = template.$('[name=password]').val();
-    var confirm = template.$('[name=confirm]').val();
-
-    var errors = {};
-
-    if (! email) {
-      errors.email = 'Email required';
+  helpers: {
+    errorMessages: function() {
+      return _.values(this.state.get("errors"));
+    },
+    errorClass: function(key) {
+      return this.state.get("errors")[key] && 'error';
     }
+  },
 
-    if (! password) {
-      errors.password = 'Password required';
-    }
+  events: {
+    'submit': function(event) {
+      event.preventDefault();
 
-    if (confirm !== password) {
-      errors.confirm = 'Please confirm your password';
-    }
+      // XXX convert to event.target.email, etc
+      var email = this.$('[name=email]').val();
+      var password = this.$('[name=password]').val();
+      var confirm = this.$('[name=confirm]').val();
 
-    Session.set(ERRORS_KEY, errors);
-    if (_.keys(errors).length) {
-      return;
-    }
+      var errors = {};
 
-    Accounts.createUser({
-      email: email,
-      password: password
-    }, function(error) {
-      if (error) {
-        return Session.set(ERRORS_KEY, {'none': error.reason});
+      if (! email) {
+        errors.email = 'Email required';
       }
 
-      Router.go('home');
-    });
+      if (! password) {
+        errors.password = 'Password required';
+      }
+
+      if (confirm !== password) {
+        errors.confirm = 'Please confirm your password';
+      }
+
+      this.state.set("errors", errors);
+      if (_.keys(errors).length) {
+        return;
+      }
+
+      Accounts.createUser({
+        email: email,
+        password: password
+      }, function(error) {
+        if (error) {
+          return this.state.set("errors", {'none': error.reason});
+        }
+
+        Router.go('home');
+      });
+    }
   }
 });

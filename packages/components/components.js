@@ -131,10 +131,10 @@ Component.define = function (template, definition) {
     };
   });
 
-  // Assign callbacks as helpers
-  _.each(definition.callbacks, function (callback, callbackName) {
+  // Assign methods as helpers
+  _.each(definition.methods, function (callback, callbackName) {
     if (boundHelpers[callbackName]) {
-      console.log("Can't attach a callback named the same as a helper.");
+      console.log("Can't attach a method named the same as a helper.");
     } else {
       boundHelpers[callbackName] = function () {
         return _.bind(callback, templateInst);
