@@ -14,10 +14,12 @@ Component.define(Template.signin, {
 
   events: {
     'submit': function(event) {
+      var self = this;
+
       event.preventDefault();
       
-      var email = this.$('[name=email]').val();
-      var password = this.$('[name=password]').val();
+      var email = self.$('[name=email]').val();
+      var password = self.$('[name=password]').val();
       
       var errors = {};
 
@@ -29,14 +31,14 @@ Component.define(Template.signin, {
         errors.password = 'Password is required';
       }
       
-      this.state.set("errors", errors);
+      self.state.set("errors", errors);
       if (_.keys(errors).length) {
         return;
       }
       
       Meteor.loginWithPassword(email, password, function(error) {
         if (error) {
-          return this.state.set("errors", {'none': error.reason});
+          return self.state.set("errors", {'none': error.reason});
         }
         
         Router.go('home');

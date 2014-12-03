@@ -23,6 +23,8 @@ Component.define(Template.listsShow, {
     };
 
     this.saveList = function() {
+      this.state.set("editingTitle", false);
+      
       Lists.update(this.args.get("_id"),
         {$set: {name: this.$('[name=name]').val()}});
     };
@@ -70,29 +72,23 @@ Component.define(Template.listsShow, {
     };
   },
   rendered: function () {
-    if (firstRender) {
-      // Released in app-body.js
-      listFadeInHold = LaunchScreen.hold();
+    var self = this;
 
-      // Handle for launch screen defined in app-body.js
-      listRenderHold.release();
-
-      firstRender = false;
+    if (self.list()) {
+      self.find('.js-title-nav')._uihooks = {
+        insertElement: function(node, next) {
+          $(node)
+            .hide()
+            .insertBefore(next)
+            .fadeIn();
+        },
+        removeElement: function(node) {
+          $(node).fadeOut(function() {
+            this.remove();
+          });
+        }
+      };
     }
-
-    this.find('.js-title-nav')._uihooks = {
-      insertElement: function(node, next) {
-        $(node)
-          .hide()
-          .insertBefore(next)
-          .fadeIn();
-      },
-      removeElement: function(node) {
-        $(node).fadeOut(function() {
-          this.remove();
-        });
-      }
-    };
   },
 
   helpers: {
