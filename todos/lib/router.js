@@ -1,3 +1,7 @@
+if (Meteor.isClient) {
+  Meteor.subscribe('publicLists');
+}
+
 Router.configure({
   // we use the  appBody template to define the layout for the entire app
   layoutTemplate: 'appBody'
@@ -17,7 +21,11 @@ Router.map(function() {
   this.route('home', {
     path: '/',
     action: function() {
-      Router.go('listsShow', Lists.findOne());
+      if (Lists.findOne()) {
+        Router.go('listsShow', Lists.findOne());
+      } else {
+        this.render("appLoading");
+      }
     }
   });
 });
