@@ -2,7 +2,7 @@
   {{#if list}}
     <div class="page lists-show">
       <nav class="js-title-nav">
-        {{#if editingTitle}}
+        {{#if state editingTitle}}
           <form class="js-edit-form list-edit-form">
             <input type="text" name="name" value="{{list.name}}">
             <div class="nav-group right">

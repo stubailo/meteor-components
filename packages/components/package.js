@@ -1,19 +1,12 @@
 Package.describe({
-  name: 'simple:components',
-  summary: ' /* Fill me in! */ ',
-  version: '1.0.0',
-  git: ' /* Fill me in! */ '
+  name: 'mdg:components',
+  summary: 'Beta for implementation for components',
+  version: '1.0.0-pre.3'
 });
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0');
   api.addFiles('components.js');
-  api.use(["reactive-var", "reactive-dict"]);
+  api.use(["tracker", "underscore", "ddp", "reactive-var", "htmljs"]);
   api.export("Component");
-});
-
-Package.onTest(function(api) {
-  api.use('tinytest');
-  api.use('components');
-  api.addFiles('components-tests.js');
 });

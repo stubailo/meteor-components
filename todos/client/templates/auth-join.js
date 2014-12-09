@@ -16,10 +16,9 @@ Component.define(Template.join, {
     'submit': function(event) {
       event.preventDefault();
 
-      // XXX convert to event.target.email, etc
-      var email = this.$('[name=email]').val();
-      var password = this.$('[name=password]').val();
-      var confirm = this.$('[name=confirm]').val();
+      var email = event.target.email.value;
+      var password = event.target.password.value;
+      var confirm = event.target.confirm.value;
 
       var errors = {};
 

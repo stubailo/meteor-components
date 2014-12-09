@@ -1,8 +1,3 @@
-// Track if this is the first time the list template is rendered
-var firstRender = true;
-var listRenderHold = LaunchScreen.hold();
-listFadeInHold = null;
-
 Component.define(Template.listsShow, {
   created: function () {
     this.subscribe("todos", this.args.get("_id"));
@@ -71,6 +66,7 @@ Component.define(Template.listsShow, {
       }
     };
   },
+
   rendered: function () {
     var self = this;
 
@@ -92,10 +88,6 @@ Component.define(Template.listsShow, {
   },
 
   helpers: {
-    editingTitle: function () {
-      return this.state.get("editingTitle");
-    },
-
     selectedItem: function() {
       return this.state.get("selectedItem");
     },
@@ -106,14 +98,6 @@ Component.define(Template.listsShow, {
 
     todos: function(listId) {
       return Todos.find({listId: listId}, {sort: {createdAt : -1}});
-    },
-
-    setSelected: function () {
-      var self = this;
-      // XXX this is a callback... we need an explicit way to set it
-      return function (todoItemId) {
-        self.state.set("selectedItem", todoItemId);
-      };
     },
 
     list: function () {
@@ -199,6 +183,16 @@ Component.define(Template.listsShow, {
 
       Lists.update(this.args.get("_id"), {$inc: {incompleteCount: 1}});
       $input.val('');
+    },
+
+    'select todosItem': function (event) {
+      this.state.set("selectedItem", event._id);
+    },
+
+    'deselect todosItem': function (event) {
+      if (this.state.get("selectedItem") === event._id) {
+        this.state.set("selectedItem", null);
+      }
     }
   }
 });

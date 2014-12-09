@@ -18,13 +18,15 @@ Component.define(Template.todosItem, {
     },
     
     'focus input[type=text]': function() {
-      this.args.get("setSelected")(this.args.get("_id"));
+      this.trigger("select", {
+        _id: this.args.get("_id")
+      });
     },
     
     'blur input[type=text]': function() {
-      if (this.args.get("selectedItem") === this.args.get("_id")) {
-        this.args.get("setSelected")(null);
-      }
+      this.trigger("deselect", {
+        _id: this.args.get("_id")
+      });
     },
     
     'keydown input[type=text]': function(event) {

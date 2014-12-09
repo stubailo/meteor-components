@@ -7,7 +7,7 @@ var SimpleReactiveDict = function () {
 
   var ensureDeps = function(key) {
     if(!deps[key]) {
-      deps[key] = new Deps.Dependency();
+      deps[key] = new Tracker.Dependency();
     }
   };
 
@@ -30,8 +30,6 @@ Component = {};
 
 var ComponentInstance = function (templateInst) {
   var self = this;
-
-  // XXX init a bunch of stuff
   
   var subHandles = new ReactiveVar([]);
   self.subscribe = function (/* subscription args */) {
@@ -73,28 +71,49 @@ var ComponentInstance = function (templateInst) {
     // XXX be reactive in the opposite direction so that we can communicate
     // to parents
     _.each(args, function (argVal, argName) {
-      if (argVal instanceof ReactiveVar) {
-        updateArg(argName, argVal.get());
-      } else {
-        updateArg(argName, argVal);
-      }
+      updateArg(argName, argVal);
     });
   });
 
   // XXX bind all methods?
   self.find = _.bind(templateInst.find, templateInst);
   self.$ = _.bind(templateInst.$, templateInst);
+
+  // Trigger DOM events
+  self.trigger = function (eventName, propertiesToAdd) {
+    var event = jQuery.Event(eventName);
+    _.extend(event, propertiesToAdd);
+    $(templateInst.firstNode).trigger(event);
+  };
 };
 
 Component.define = function (template, definition) {
   // XXX need more protection against changing things like helpers/events
   definition = _.clone(definition);
 
+  var tmplName = template.viewName.split(".")[1];
+
+  // XXX do we want a prefix of some kind?
+  var domName = tmplName;
+
+  // Wrap HTML in a component tag
+  var oldRenderFunc = template.renderFunction;
+  template.renderFunction = function () {
+    return HTML.getTag(domName)(oldRenderFunc.call(this));
+  };
+
   // Assign all the callbacks to the template and bind them to component
   // instance
   template.created = function () {
     var templateInst = this;
     templateInst._component = new ComponentInstance(templateInst);
+
+    if (definition.methods) {
+      // Assign API methods
+      _.extend(templateInst._component, definition.methods);
+      _.bindAll(templateInst._component, _.keys(definition.methods));
+    }
+
     if (definition.created) {
       definition.created.call(templateInst._component);
     }
@@ -102,6 +121,10 @@ Component.define = function (template, definition) {
 
   template.rendered = function () {
     var templateInst = this;
+
+    // XXX Assign all API methods to the DOM element itself
+    // XXX not sure if good idea, could do a Blaze hack
+
     if (definition.rendered) {
       definition.rendered.call(templateInst._component);
     }
