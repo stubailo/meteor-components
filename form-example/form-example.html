@@ -44,6 +44,9 @@
 
 <template name="simpleInput">
   <input type="text" value="{{value}}" />
+  {{#unless isSaved}}
+    !!!
+  {{/unless}}
 </template>
 
 <template name="simpleSubmit">

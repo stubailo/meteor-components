@@ -41,11 +41,19 @@ if (Meteor.isClient) {
             self.args.get("_id"))[path];
       };
 
+      self.isValueSaved = function (path) {
+        return ! self.state.get("values")[path];
+      };
+
       self.autorun(function () {
-        if (self.args.get("realtime")) {
+        // if values isn't empty and the form is realtime, save the new
+        // values and clear them
+        if (self.args.get("realtime") && ! _.isEmpty(self.state.get("values"))) {
           self.args.get("collection").update(self.args.get("_id"), {
             $set: self.state.get("values")
           });
+
+          self.state.set("values", {});
         }
       });
     },
@@ -70,6 +78,8 @@ if (Meteor.isClient) {
         self.args.get("collection").update(self.args.get("_id"), {
           $set: self.state.get("values")
         });
+
+        self.state.set("values", {});
       }
     }
   });
@@ -78,6 +88,9 @@ if (Meteor.isClient) {
     helpers: {
       value: function () {
         return this.args.get("form").getValue(this.args.get("path"));
+      },
+      isSaved: function () {
+        return this.args.get("form").isValueSaved(this.args.get("path"));
       }
     },
     events: {
