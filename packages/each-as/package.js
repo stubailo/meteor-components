@@ -7,7 +7,8 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0');
-  api.addFiles('each-as.js');
+  api.addFiles(['each-as.html', 'each-as.js'], "web");
+  api.use("templating");
 });
 
 Package.onTest(function(api) {

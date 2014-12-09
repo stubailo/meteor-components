@@ -1,0 +1,51 @@
+<head>
+  <title>form-example</title>
+</head>
+
+<body>
+  <h1>Welcome to Meteor!</h1>
+
+  {{> listForm}}
+</body>
+
+<template name="listForm">
+  <button class="new-item">New Item</button>
+  <button class="toggle-realtime">Toggle Realtime Form</button>
+
+  {{#each items}}
+    {{#simpleForm realtime=realtimeSetting _id=_id collection=collection}}
+      <div>
+        Number: {{> simpleInput path="number" form=form}}
+        Text: {{> simpleInput path="text" form=form}}
+
+        {{#unless realtime}}
+          {{> simpleSubmit}}
+        {{/unless}}
+      </div>
+    {{/simpleForm}}
+  {{/each}}
+
+  <h3>Actual values:</h3>
+
+  <ul>
+    {{#each items}}
+      <li>Number: {{number}}, text: {{text}}</li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="simpleForm">
+  {{#let value=form name="form"}}
+    {{#let value=realtime name="realtime"}}
+      {{> Template.contentBlock this}}
+    {{/let}}
+  {{/let}}
+</template>
+
+<template name="simpleInput">
+  <input type="text" value="{{value}}" />
+</template>
+
+<template name="simpleSubmit">
+  <button role="submit">Submit</button>
+</template>

@@ -1,0 +1,15 @@
+<template name="let">
+  {{#with merge .. name value}}
+    {{> Template.contentBlock this}}
+  {{/with}}
+</template>
+
+<template name="eachAs">
+  {{#each in}}
+    {{#with ../..}}
+      {{#let name=../../name value=..}}
+        {{> Template.contentBlock this}}
+      {{/let}}
+    {{/with}}
+  {{/each}}
+</template>

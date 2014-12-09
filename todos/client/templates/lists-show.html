@@ -55,7 +55,7 @@
       <div class="content-scrollable list-items">
         {{#if todosReady}}
           {{#each todos _id}}
-            {{> todosItem _id=this._id listId=this.listId setSelected=setSelected selectedItem=selectedItem}}
+            {{> todosItem _id=this._id listId=this.listId selectedItem=selectedItem}}
           {{else}}
             <div class="wrapper-message">
               <div class="title-message">No tasks here</div>
