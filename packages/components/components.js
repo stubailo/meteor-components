@@ -30,7 +30,6 @@ Component = {};
 
 var ComponentInstance = function (templateInst) {
   var self = this;
-  
   var subHandles = new ReactiveVar([]);
   self.subscribe = function (/* subscription args */) {
     var handle = Meteor.subscribe.apply(Meteor, arguments);
@@ -84,6 +83,29 @@ var ComponentInstance = function (templateInst) {
     var event = jQuery.Event(eventName);
     _.extend(event, propertiesToAdd);
     $(templateInst.firstNode).trigger(event);
+  };
+
+  self._templateInstance = templateInst;
+  //Aim to find Template.TEMPLATE_NAME.PROP;
+  self.lookupProp = function (view, prop) {
+    var template;
+    var origView = view;
+    var value;
+
+    while (view) {
+      if (view.template && view.template.__helpers.has(prop)) {
+        return view.template.__helpers.get(prop);
+      } else if (view.template && view.template[prop]) {
+        return view.template[prop];
+      } else {
+        view = view.parentView;
+      }
+    }
+    return undefined;
+  };
+
+  self.getTemplateInstance = function () {
+
   };
 };
 
@@ -145,7 +167,7 @@ Component.define = function (template, definition) {
   _.each(definition.events, function (handler, eventDescriptor) {
     // Bind events to the component instance
     boundEvents[eventDescriptor] = function (event, templateInst) {
-      return handler.call(templateInst._component, event);
+      return handler.call(templateInst._component, event, templateInst);
     };
   });
 
