@@ -104,8 +104,25 @@ var ComponentInstance = function (templateInst) {
     return undefined;
   };
 
-  self.getTemplateInstance = function () {
+  self.name = templateInst.view.name.split(".")[1];
+  /* This is to find a named component instance from parenting template
+   * For example:
+   * {{#Parent_Template}}
+   *  {{Child_Template}}
+   * {{/Parent_Template}}
+   */
+  self.lookupComponentByName = function (name) {
+    var self = this  
+      , view = self._templateInstance.view;
 
+    while (view) {
+      if (view._component && view._component.name && view._component.name === name) {
+        return view._component;
+      } else {
+        view = view.parentView;
+      } 
+    }
+    return undefined;
   };
 };
 
