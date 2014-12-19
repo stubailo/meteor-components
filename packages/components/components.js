@@ -112,15 +112,19 @@ var ComponentInstance = function (templateInst) {
    * {{/Parent_Template}}
    */
   self.lookupComponentByName = function (name) {
-    var self = this  
+    var self = this
       , view = self._templateInstance.view;
 
     while (view) {
-      if (view._component && view._component.name && view._component.name === name) {
-        return view._component;
+      if (view._templateInstance
+          && view._templateInstance._component
+          && view._templateInstance._component.name
+          && view._templateInstance._component.name === name) {
+
+        return view._templateInstance._component;
       } else {
         view = view.parentView;
-      } 
+      }
     }
     return undefined;
   };
