@@ -142,7 +142,11 @@ Component.define = function (template, definition) {
   // Wrap HTML in a component tag
   var oldRenderFunc = template.renderFunction;
   template.renderFunction = function () {
-    return HTML.getTag(domName)(oldRenderFunc.call(this));
+    if (definition._preventComponentTag) {
+      return oldRenderFunc.call(this);
+    } else {
+      return HTML.getTag(domName)(oldRenderFunc.call(this));
+    }
   };
 
   // Assign all the callbacks to the template and bind them to component
