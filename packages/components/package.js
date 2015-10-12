@@ -1,6 +1,6 @@
 Package.describe({
-  name: 'bozhao:components',
-  //name: 'mdg:components',
+  //name: 'bozhao:components',
+  name: 'mdg:components',
   summary: 'Beta for implementation for components, based on mdg:components',
   version: '1.0.0-pre.7'
 });
